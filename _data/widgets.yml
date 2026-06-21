@@ -1,0 +1,32 @@
+# 自定义侧边栏组件
+
+welcome:
+  layout: markdown
+  title: 👋 欢迎
+  content: |
+    Hi! 我是 **Webgua**，一名热爱技术的开发者。
+
+    专注于数据科学、机器学习与量化交易。
+
+    🛠 [技术栈](/about/) · 📂 [项目](/wiki/) · ✍️ [博客](/blog/)
+
+recent:
+  layout: recent
+  rss:
+  limit: 5
+
+ghuser:
+  layout: ghuser
+  username: webgua
+  avatar: true
+
+tagcloud:
+  layout: tagcloud
+  title: 🏷 标签
+  min_font: 12
+  max_font: 24
+  amount: 50
+  orderby: name
+  order: 1
+  color: false
+  show_count: false

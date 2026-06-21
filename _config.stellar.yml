@@ -1,0 +1,150 @@
+######## Stellar 主题配置 ########
+
+# Logo 区域
+logo:
+  avatar: '[{config.avatar}](/about/)'
+  title: '[{config.title}](/)'
+  subtitle: '{config.subtitle}'
+
+# 导航栏菜单
+menubar:
+  columns: 4
+  items:
+    - id: post
+      theme: '#2563eb'
+      icon: solar:documents-bold-duotone
+      title: 博客
+      url: /blog/
+    - id: wiki
+      theme: '#10b981'
+      icon: solar:notebook-bookmark-bold-duotone
+      title: 项目
+      url: /wiki/
+    - id: explore
+      theme: '#f59e0b'
+      icon: solar:user-bold-duotone
+      title: 关于
+      url: /about/
+
+# 站点主结构树
+site_tree:
+  home:
+    leftbar: welcome, recent
+    rightbar:
+  index_blog:
+    base_dir: blog
+    menu_id: post
+    leftbar: welcome, recent
+    rightbar:
+  index_wiki:
+    base_dir: wiki
+    menu_id: wiki
+    leftbar: related, recent
+    rightbar:
+  post:
+    menu_id: post
+    leftbar: related, recent
+    rightbar: toc
+  wiki:
+    menu_id: wiki
+    leftbar: tree, related, recent
+    rightbar: toc
+  page:
+    leftbar: recent
+    rightbar: toc
+
+# 文章配置
+article:
+  type: tech
+  indent:
+  cover_ratio: 2
+  banner_ratio: 2.5
+  auto_excerpt: 128
+  license: '本文采用 [署名-非商业性使用-相同方式共享 4.0 国际](https://creativecommons.org/licenses/by-nc-sa/4.0/) 许可协议，转载请注明出处。'
+  share:
+
+# 页脚
+footer:
+  social:
+    - icon: '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2A10 10 0 0 0 2 12c0 4.42 2.87 8.17 6.84 9.5c.5.08.66-.23.66-.5v-1.69c-2.77.6-3.36-1.34-3.36-1.34c-.46-1.16-1.11-1.47-1.11-1.47c-.91-.62.07-.6.07-.6c1 .07 1.53 1.03 1.53 1.03c.87 1.52 2.34 1.07 2.91.83c.09-.65.35-1.09.63-1.34c-2.22-.25-4.55-1.11-4.55-4.94c0-1.1.39-1.99 1.03-2.69c-.1-.26-.45-1.29.1-2.64c0 0 .84-.27 2.75 1.02c.79-.22 1.65-.33 2.5-.33s1.71.11 2.5.33c1.91-1.29 2.75-1.02 2.75-1.02c.55 1.35.2 2.38.1 2.64c.64.7 1.03 1.59 1.03 2.69c0 3.84-2.34 4.68-4.57 4.93c.36.31.69.92.69 1.85V21c0 .27.16.59.67.5C19.14 20.16 22 16.42 22 12A10 10 0 0 0 12 2"/></svg>'
+      url: https://github.com/webgua
+  sitemap:
+    - title: 博客
+      items:
+        - '[近期发布](/blog/)'
+        - '[分类](/blog/categories/)'
+        - '[标签](/blog/tags/)'
+    - title: 导航
+      items:
+        - '[项目](/wiki/)'
+        - '[关于](/about/)'
+  content: |
+    本站由 [{author.name}](/) 使用 [{theme.name} {theme.version}]({theme.tree}) 主题创建。
+
+# 样式配置
+style:
+  prefers_theme: auto
+  smooth_scroll: true
+  font-size:
+    root: 16px
+    body: 17px
+    code: 85%
+    codeblock: 0.8125rem
+  font-family:
+    body: '"Inter", "SF Pro Display", system-ui, -apple-system, "Microsoft Yahei", "Segoe UI", sans-serif'
+    code: '"JetBrains Mono", "Fira Code", Menlo, Monaco, Consolas, monospace'
+    codeblock: '"JetBrains Mono", "Fira Code", Menlo, Monaco, Consolas, monospace'
+  text-align: left
+  border-radius:
+    card-l: 20px
+    card: 14px
+    card-s: 10px
+    bar: 6px
+    image-l: 20px
+    image: 14px
+    image-s: 8px
+  color:
+    theme: 'hsl(221 83% 53%)'
+    accent: 'hsl(160 84% 39%)'
+    link: 'hsl(221 83% 53%)'
+  animated_avatar:
+    animate: auto
+    background: https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.12/avatar/round/rainbow64@3x.webp
+  codeblock:
+    scrollbar: 4px
+    highlightjs_theme: https://gcore.jsdelivr.net/gh/highlightjs/cdn-release@11.9/build/styles/atom-one-dark.min.css
+  loading:
+    loading: 正在加载
+    error: 加载失败，请稍后重试。
+  leftbar:
+    background-color: var(--card)
+    blur-px: 100px
+    blur-bg: var(--bg-a60)
+    background-opacity: 0.85
+
+# 默认资源
+default:
+  avatar: https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.12/avatar/round/3442075.svg
+  link: https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.12/link/8f277b4ee0ecd.svg
+  cover: https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.12/cover/76b86c0226ffd.svg
+  image: https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.12/image/2659360.svg
+  project: https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.12/image/2779789.png
+  banner: https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.12/banner/books.jpg
+
+# 插件
+plugins:
+  preload:
+    enable: true
+    service: flying_pages
+    flying_pages: https://gcore.jsdelivr.net/npm/flying-pages@2/flying-pages.min.js
+  fancybox:
+    enable: true
+    loader: /js/plugins/fancybox-loader.js
+    js: https://gcore.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.umd.js
+    css: https://gcore.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.css
+    selector: .timenode p>img
+  copycode:
+    enable: true
+    default_text: 'Copy'
+    success_text: 'Copied'
+    toast: 复制成功
