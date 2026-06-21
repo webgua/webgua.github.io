@@ -2,8 +2,8 @@
 ## Docs: https://hexo.io/docs/configuration.html
 
 # Site
-title: Webgua's Home
-subtitle: 'Explore, Build, Share'
+title: 观想厅
+subtitle: '独立思考、探索与分享'
 description: '个人主页 - 技术探索与分享'
 keywords:
   - programming
@@ -64,7 +64,7 @@ prismjs:
 
 # Home page setting
 index_generator:
-  path: 'blog'
+  path: ''
   per_page: 10
   order_by: -date
 

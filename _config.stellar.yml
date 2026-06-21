@@ -14,7 +14,7 @@ menubar:
       theme: '#2563eb'
       icon: solar:documents-bold-duotone
       title: 博客
-      url: /blog/
+      url: /
     - id: wiki
       theme: '#10b981'
       icon: solar:notebook-bookmark-bold-duotone
