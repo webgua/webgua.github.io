@@ -6,27 +6,34 @@ logo:
   title: '[{config.title}](/)'
   subtitle: '{config.subtitle}'
 
-# 导航栏菜单
+# 导航栏菜单（Lil'Log / PaperMod 风格：纯文字顶部导航）
+# 注意：不要配 icon —— 主题的 icon() helper 只认识内置图标集，
+# 不认识的名字会原样输出成文本（如 "solar:archive-bold-duotone"）；
+# 不配 icon 时模板走 <span>标题</span> 分支，正好显示纯文字。
 menubar:
-  columns: 4
+  columns: 6
   items:
     - id: post
-      theme: '#2563eb'
-      icon: solar:documents-bold-duotone
       title: 博客
       url: /
+    - id: archive
+      title: 归档
+      url: /archives/
+    - id: tags
+      title: 标签
+      url: /tags/
+    - id: categories
+      title: 分类
+      url: /categories/
     - id: wiki
-      theme: '#10b981'
-      icon: solar:notebook-bookmark-bold-duotone
       title: 项目
       url: /wiki/
     - id: explore
-      theme: '#f59e0b'
-      icon: solar:user-bold-duotone
       title: 关于
       url: /about/
 
-# 站点主结构树
+# 站点主结构树（单栏：去掉所有 leftbar 组件与 rightbar 侧栏）
+# 注意：leftbar 至少要有一个值，顶部搜索框才会渲染（Stellar 的 search partial 依赖它）
 site_tree:
   home:
     leftbar: welcome, recent
@@ -34,24 +41,28 @@ site_tree:
   index_blog:
     base_dir: blog
     menu_id: post
-    leftbar: welcome, recent
+    leftbar: recent
     rightbar:
   index_wiki:
     base_dir: wiki
     menu_id: wiki
-    leftbar: related, recent
+    leftbar: recent
     rightbar:
   post:
     menu_id: post
-    leftbar: related, recent
-    rightbar: toc
+    leftbar: recent
+    rightbar:
   wiki:
     menu_id: wiki
-    leftbar: tree, related, recent
-    rightbar: toc
+    leftbar: recent
+    rightbar:
   page:
     leftbar: recent
-    rightbar: toc
+    rightbar:
+
+# 自定义组件统一放在 source/_data/widgets.yml（Stellar 从 Hexo site.data 读取），
+# 写在本文件的 widgets: 下会被覆盖、不生效。
+
 
 # 文章配置
 article:
@@ -73,9 +84,9 @@ footer:
   sitemap:
     - title: 博客
       items:
-        - '[近期发布](/blog/)'
-        - '[分类](/blog/categories/)'
-        - '[标签](/blog/tags/)'
+        - '[近期发布](/archives/)'
+        - '[分类](/categories/)'
+        - '[标签](/tags/)'
     - title: 导航
       items:
         - '[项目](/wiki/)'
@@ -139,9 +150,9 @@ plugins:
     enable: true
     service: flying_pages
     flying_pages: https://gcore.jsdelivr.net/npm/flying-pages@2/flying-pages.min.js
+  # 关闭：loader 指向的 /js/plugins/fancybox-loader.js 并不存在，会 404
   fancybox:
-    enable: true
-    loader: /js/plugins/fancybox-loader.js
+    enable: false
     js: https://gcore.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.umd.js
     css: https://gcore.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.css
     selector: .timenode p>img

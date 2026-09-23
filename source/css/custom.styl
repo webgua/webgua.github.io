@@ -1,211 +1,664 @@
-/* ========================================
-   Custom Styles - Clean Modern Aesthetic
-   Inspired by Notion / Linear / Stripe
-   ======================================== */
+/* ============================================================
+   Lil'Log / PaperMod 版式  —  https://lilianweng.github.io/
+   ------------------------------------------------------------
+   参数实测自线上样式表（Hugo + PaperMod）：
+     --gap 24px  --content-gap 20px  --nav-width 1024px
+     --main-width 720px  --header-height 60px  --radius 8px
+     body 16px/1.6 系统字体栈；链接无下划线
+     .post-entry  padding 24px + 1px border + 8px radius
+     .entry-header h2 24px   .entry-content 14px/2行截断
+     .entry-footer 13px      代码块恒为深色底
+   ------------------------------------------------------------
+   结构映射（Stellar -> PaperMod）：
+     .l_left .leftbar-container  ->  .header > .nav
+     .logo-wrap                  ->  .logo
+     .nav-area .menu             ->  #menu
+     .l_main                     ->  .main
+     .post-list .post-card       ->  .post-entry
+       h2.post-title             ->  .entry-header h2
+       .excerpt                  ->  .entry-content
+       .meta.cap                 ->  .entry-footer
+     .page-footer                ->  .footer
+     .md-text.content            ->  .post-content
+   首页 welcome 组件由 scripts/papermod.js 搬进正文，包成 .first-entry
+   ============================================================ */
 
-/* --- Font Import --- */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
-/* --- Global Overrides --- */
-:root {
-  /* Softer, more refined color palette */
-  --theme-color: hsl(221, 83%, 53%);
-  --accent-color: hsl(160, 84%, 39%);
-}
+/* ---------- 1. 色板 ---------- */
+:root
+  --pm-gap: 24px
+  --pm-content-gap: 20px
+  --pm-nav-width: 1024px
+  --pm-main-width: 720px
+  --pm-header-height: 60px
+  --pm-footer-height: 60px
+  --pm-radius: 8px
+  --pm-theme: rgb(255, 255, 255)
+  --pm-entry: rgb(255, 255, 255)
+  --pm-primary: rgb(30, 30, 30)
+  --pm-secondary: rgb(108, 108, 108)
+  --pm-tertiary: rgb(214, 214, 214)
+  --pm-content: rgb(31, 31, 31)
+  --pm-hljs-bg: rgb(28, 29, 33)
+  --pm-code-bg: rgb(245, 245, 245)
+  --pm-border: rgb(238, 238, 238)
 
-/* --- Refined Card Shadows --- */
-.cap,
-.md-text .note,
-.md-text .tag-plugin {
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.06);
-  transition: box-shadow 0.2s ease, transform 0.2s ease;
-}
+/* 深色：跟随系统 */
+@media (prefers-color-scheme: dark)
+  :root:not([data-theme])
+    --pm-theme: rgb(29, 30, 32)
+    --pm-entry: rgb(46, 46, 51)
+    --pm-primary: rgb(218, 218, 219)
+    --pm-secondary: rgb(155, 156, 157)
+    --pm-tertiary: rgb(65, 66, 68)
+    --pm-content: rgb(196, 196, 197)
+    --pm-hljs-bg: rgb(46, 46, 51)
+    --pm-code-bg: rgb(55, 56, 62)
+    --pm-border: rgb(51, 51, 51)
 
-.cap:hover,
-.md-text .note:hover {
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08), 0 2px 4px rgba(0, 0, 0, 0.04);
-}
+/* 深色：手动切换 */
+:root[data-theme="dark"]
+  --pm-theme: rgb(29, 30, 32)
+  --pm-entry: rgb(46, 46, 51)
+  --pm-primary: rgb(218, 218, 219)
+  --pm-secondary: rgb(155, 156, 157)
+  --pm-tertiary: rgb(65, 66, 68)
+  --pm-content: rgb(196, 196, 197)
+  --pm-hljs-bg: rgb(46, 46, 51)
+  --pm-code-bg: rgb(55, 56, 62)
+  --pm-border: rgb(51, 51, 51)
 
-/* --- Smoother Transitions --- */
-a, button, .cap, .md-text .note {
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-}
+/* 把 Stellar 的语义变量映射到 PaperMod 色板。
+   三个选择器都要写，否则会被 main.css 里同特异性的 [data-theme] 规则盖掉 */
+:root,
+:root[data-theme="light"],
+:root[data-theme="dark"]
+  --background: var(--pm-theme)
+  --card: var(--pm-entry)
+  --text: var(--pm-primary)
+  --text-p1: var(--pm-content)
+  --text-p2: var(--pm-secondary)
+  --text-p3: var(--pm-tertiary)
+  --block: var(--pm-code-bg)
+  --block-border: var(--pm-border)
+  --theme: var(--pm-primary)
+  --accent: var(--pm-primary)
+  --link: var(--pm-primary)
 
-/* --- Refined Typography --- */
-.md-text p {
-  line-height: 1.75;
-  letter-spacing: -0.01em;
-}
 
-.md-text h1,
-.md-text h2,
-.md-text h3,
-.md-text h4 {
-  letter-spacing: -0.025em;
-  font-weight: 600;
-}
+/* ---------- 2. 全局排版 ---------- */
+body
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", "PingFang SC", "Microsoft YaHei", sans-serif
+  font-size: 16px
+  line-height: 1.6
+  word-break: break-word
+  background: var(--pm-theme)
+  color: var(--pm-primary)
 
-/* --- Navbar Refinement --- */
-.nav-wrap {
-  backdrop-filter: blur(12px) saturate(180%);
-  -webkit-backdrop-filter: blur(12px) saturate(180%);
-}
+code, pre, kbd, samp, .highlight
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace
 
-/* --- Sidebar Polish --- */
-.leftbar {
-  border-right: 1px solid var(--block-border);
-}
+a
+  text-decoration: none
 
-/* --- Code Block Enhancement --- */
-.md-text pre {
-  border: 1px solid var(--block-border);
-}
+h1, h2, h3, h4, h5, h6
+  line-height: 1.3
+  color: var(--pm-primary)
 
-/* --- Hero Section Custom Styles --- */
-.hero-section {
-  text-align: center;
-  padding: 3rem 0 2rem;
-}
+::selection
+  background: rgba(0, 0, 0, 0.12)
+  color: inherit
 
-.hero-section .avatar-wrap {
-  width: 120px;
-  height: 120px;
-  margin: 0 auto 1.5rem;
-  border-radius: 50%;
-  overflow: hidden;
-  border: 3px solid var(--block-border);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
-}
+@media (prefers-color-scheme: dark)
+  :root:not([data-theme]) ::selection
+    background: rgba(255, 255, 255, 0.16)
 
-.hero-section .avatar-wrap img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
+:root[data-theme="dark"] ::selection
+  background: rgba(255, 255, 255, 0.16)
 
-.hero-section h1 {
-  font-size: 2.25rem;
-  font-weight: 700;
-  margin-bottom: 0.5rem;
-  letter-spacing: -0.03em;
-}
 
-.hero-section .tagline {
-  font-size: 1.125rem;
-  color: var(--text-p2);
-  margin-bottom: 1.5rem;
-}
+/* ---------- 3. 单栏骨架 ----------
+   Stellar 原本是 grid-template-columns: 1fr main 1fr 的三栏，
+   这里退化成顺序块级流：顶栏 -> 正文 -> 页脚 */
+.l_body
+  display: block
+  max-width: none
+  margin: 0
+  padding: 0
 
-/* --- Skills Grid --- */
-.skills-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-  gap: 1rem;
-  margin: 1.5rem 0;
-}
+aside.l_right
+  display: none
 
-.skill-item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 1rem 0.5rem;
-  border-radius: 12px;
-  background: var(--card);
-  border: 1px solid var(--block-border);
-  transition: all 0.2s ease;
-}
+.l_body .l_main
+  max-width: calc(var(--pm-main-width) + var(--pm-gap) * 2)
+  margin: 0 auto
+  padding: var(--pm-gap)
 
-.skill-item:hover {
-  border-color: var(--theme-color);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
-}
+/* 移动端重复的 logo、正文上方的 tab 导航、遮罩都不需要 */
+.l_main header.header.mobile-only,
+.l_main .navbar.top,
+.main-mask
+  display: none
 
-.skill-item .icon {
-  font-size: 2rem;
-}
 
-.skill-item .name {
-  font-size: 0.8125rem;
-  font-weight: 500;
-  color: var(--text-p1);
-}
+/* ---------- 4. 顶栏 ----------
+   注意：main.css 里是 `.l_body aside`（0,1,1）和 `.l_body .l_left`（0,2,0）
+   控制 position:sticky 与 width:var(--width-sidebar)，
+   这里必须同样以 .l_body 开头才能赢，否则左栏会变回 288px 窄栏 */
+.l_body .l_left
+  position: static
+  display: block
+  width: 100%
+  max-width: none
+  max-height: none
+  margin: 0
+  padding: 0
+  top: auto
+  justify-self: auto
+  border-radius: 0
+  overflow: visible
+  background: var(--pm-theme)
+  border-bottom: 1px solid var(--pm-border)
 
-/* --- Social Links Row --- */
-.social-links {
-  display: flex;
-  justify-content: center;
-  gap: 1rem;
-  margin: 1rem 0;
-}
+.l_left .sidebg
+  display: none
 
-.social-links a {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 40px;
-  height: 40px;
-  border-radius: 10px;
-  background: var(--block);
-  color: var(--text-p1);
-  transition: all 0.2s ease;
-}
+/* 对应 PaperMod 的 .nav：flex + 右对齐 + 1024px 居中
+   main.css 里此容器是 height:calc(100vh - ...) + flex-direction:column（侧栏抽屉），
+   必须一并覆盖，否则顶栏会被拉到整个视口高 */
+.l_body .l_left .leftbar-container
+  display: flex
+  flex-direction: row
+  flex-wrap: wrap
+  align-items: center
+  justify-content: flex-end
+  height: auto
+  max-width: calc(var(--pm-nav-width) + var(--pm-gap) * 2)
+  min-height: var(--pm-header-height)
+  margin: 0 auto
+  padding: 0 var(--pm-gap)
+  border-radius: 0
+  overflow: visible
+  background: transparent
+  backdrop-filter: none
 
-.social-links a:hover {
-  background: var(--theme-color);
-  color: white;
-  transform: translateY(-2px);
-}
+/* 去掉毛玻璃伪元素 */
+.l_left .leftbar-container:before,
+.l_left .leftbar-container:after
+  display: none
 
-/* --- Section Spacing --- */
-.section-block {
-  margin: 2.5rem 0;
-}
+/* logo：margin-inline-end:auto 把它推到最左，其余靠右 */
+.l_left .leftbar-container > header.header
+  margin-inline-end: auto
+  padding: 0
 
-.section-block h2 {
-  font-size: 1.5rem;
-  margin-bottom: 1rem;
-  padding-bottom: 0.5rem;
-  border-bottom: 2px solid var(--block-border);
-}
+.l_left .logo-wrap
+  display: flex
+  align-items: center
+  min-height: auto
+  padding: 0
 
-/* --- Project Placeholder --- */
-.project-placeholder {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 200px;
-  border: 2px dashed var(--block-border);
-  border-radius: 16px;
-  color: var(--text-p3);
-  font-size: 1rem;
-  margin: 1.5rem 0;
-}
+/* PaperMod 的 logo 是纯文字 */
+.l_left .logo-wrap a.avatar,
+.l_left .logo-wrap .sub
+  display: none
 
-/* --- Responsive Adjustments --- */
-@media (max-width: 768px) {
-  .hero-section h1 {
-    font-size: 1.75rem;
-  }
+.l_left .logo-wrap a.title
+  padding: 0
 
-  .skills-grid {
-    grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
-    gap: 0.75rem;
-  }
+.l_left .logo-wrap a.title .main
+  font-size: 24px
+  font-weight: 700
+  line-height: 1.3
+  color: var(--pm-primary)
 
-  .skill-item {
-    padding: 0.75rem 0.25rem;
-  }
-}
+.l_body .l_left .nav-area
+  margin: 0
 
-/* --- Smooth Scroll --- */
-html {
-  scroll-behavior: smooth;
-}
+/* 导航
+   main.css 的 .nav-area .menu 是 grid repeat(6,1fr)、.nav-item width:100%，
+   全部要还原为行内 flex */
+.l_body .l_left .nav-area .menu
+  display: flex
+  width: auto
+  flex-wrap: wrap
+  align-items: center
+  margin: 0
 
-/* --- Selection Color --- */
-::selection {
-  background: hsl(221, 83%, 53%, 0.15);
-  color: inherit;
-}
+.l_body .l_left .nav-area .menu .nav-item
+  display: block
+  width: auto
+  min-height: auto
+  padding: 0 10px
+  border-radius: 0
+  background: transparent
+  box-shadow: none
+  color: var(--pm-primary)
+  font-size: 15px
+  line-height: var(--pm-header-height)
+  transition: none
+
+.l_left .nav-area .menu .nav-item:hover
+  background: transparent
+  color: var(--pm-secondary)
+
+.l_left .nav-area .menu .nav-item.active
+  font-weight: 700
+
+/* 只留文字，去掉图标与主题自带的下划线 */
+.l_left .nav-area .menu .nav-item svg,
+.l_left .nav-area .menu .nav-item img
+  display: none
+
+.l_left .nav-area .menu .nav-item:after
+  display: none
+
+/* 搜索框
+   main.css 的 .widgets 有 flex-grow:1（侧栏里填满剩余高度），顶栏里必须清零 */
+.l_body .l_left .widgets
+  display: flex
+  flex-grow: 0
+  flex-basis: auto
+  overflow: visible
+  align-items: center
+  gap: 12px
+  margin: 0
+  padding: 0
+
+/* 单栏版式里不需要「最近更新」组件 */
+.l_left .widget-wrapper.recent
+  display: none
+
+#search-wrapper
+  margin: 0
+
+#search-wrapper input.search-input
+  width: 140px
+  height: 32px
+  padding: 0 10px
+  border: 1px solid var(--pm-border)
+  border-radius: 6px
+  background: var(--pm-code-bg)
+  color: var(--pm-primary)
+  font-size: 14px
+  line-height: 32px
+
+/* 顶栏里不需要社交图标 */
+.l_left .leftbar-container > footer.footer
+  display: none
+
+
+/* ---------- 5. 首页欢迎语（.first-entry home-info） ---------- */
+.home-info
+  margin: var(--pm-gap) 0 calc(var(--pm-gap) * 2)
+
+.home-info .widget-header
+  padding: 0
+  margin: 0
+
+.home-info .widget-header .name
+  font-size: 34px
+  font-weight: 700
+  line-height: 1.3
+  color: var(--pm-primary)
+
+.home-info .widget-body
+  margin: 14px 0
+  padding: 0
+  color: var(--pm-content)
+  font-size: 16px
+  line-height: 1.6
+
+
+/* ---------- 6. 文章列表（.post-entry） ---------- */
+.l_main .post-list
+  margin: 0
+
+.l_main .post-list .post-card
+  position: relative
+  display: block
+  margin-bottom: var(--pm-gap)
+  padding: var(--pm-gap)
+  background: var(--pm-entry)
+  border: 1px solid var(--pm-border)
+  border-radius: var(--pm-radius)
+  box-shadow: none
+  transition: transform 0.1s
+
+.l_main .post-list .post-card:hover
+  box-shadow: none
+
+.l_main .post-list .post-card:active
+  transform: scale(0.96)
+
+.l_main .post-list .post-card .md-text
+  padding: 0
+
+.l_main .post-list .post-title
+  margin: 0
+  font-size: 24px
+  font-weight: 600
+  line-height: 1.3
+  color: var(--pm-primary)
+
+.l_main .post-list .post-card .excerpt
+  margin: 8px 0
+  color: var(--pm-secondary)
+  font-size: 14px
+  line-height: 1.6
+  display: -webkit-box
+  -webkit-line-clamp: 2
+  -webkit-box-orient: vertical
+  overflow: hidden
+
+.l_main .post-list .post-card .excerpt p
+  margin: 0
+
+/* meta 行：日期 | 阅读时长 | 分类 */
+.l_main .post-list .post-card .meta.cap
+  display: flex
+  flex-wrap: wrap
+  align-items: center
+  margin: 0
+  color: var(--pm-secondary)
+  font-size: 13px
+  line-height: 1.6
+
+.l_main .post-list .post-card .meta.cap svg
+  display: none
+
+.l_main .post-list .post-card .meta.cap > span
+  display: inline-flex
+  align-items: center
+  white-space: nowrap
+
+.l_main .post-list .post-card .meta.cap > span + span:before
+  content: "|"
+  margin: 0 6px
+  color: var(--pm-tertiary)
+
+.l_main .post-list .post-card .meta.cap .breadcrumb
+  padding: 0
+  margin: 0
+  background: transparent
+  border: none
+  color: var(--pm-secondary)
+  font-size: 13px
+
+
+/* ---------- 7. 文章页头部 ---------- */
+.article.banner
+  margin: 0
+  background: transparent
+  border-radius: 0
+
+.article.banner .content
+  margin: 0
+  padding: 0
+
+.bread-nav
+  display: flex
+  flex-wrap: wrap
+  align-items: center
+  margin: 0
+  padding: 0
+  color: var(--pm-secondary)
+  font-size: 14px
+
+/* 面包屑在 PaperMod 版式里不显示，保留日期与阅读时长 */
+.bread-nav #breadcrumb
+  display: none
+
+/* 「更新于」来自 updated_option: mtime，会随文件 mtime 漂移，
+   和「发布于」几乎总是一样，这里只留一个日期 */
+.bread-nav #post-meta .sep.updated,
+.bread-nav #post-meta .text.updated
+  display: none
+
+.bread-nav .min2read
+  display: inline-flex
+  align-items: center
+  margin-inline-start: 6px
+  white-space: nowrap
+
+.bread-nav .min2read:before
+  content: "|"
+  margin-inline-end: 6px
+  color: var(--pm-tertiary)
+
+.bread-nav #post-meta
+  display: inline-flex
+  flex-wrap: wrap
+  align-items: center
+  color: var(--pm-secondary)
+
+.bread-nav #post-meta svg
+  display: none
+
+.bread-nav #post-meta span + span:before
+  content: "|"
+  margin: 0 6px
+  color: var(--pm-tertiary)
+
+.article.banner .content .bottom.only-title
+  padding: 0
+  margin: 0
+
+.article.banner .content .bottom.only-title .text-area
+  padding: 0
+  margin: 0
+
+.article.banner .content h1,
+.article.banner .content .title
+  margin: 2px 0 0
+  font-size: 36px
+  font-weight: 700
+  line-height: 1.2
+  color: var(--pm-primary)
+
+
+/* ---------- 8. 正文（.post-content） ---------- */
+.md-text.content
+  color: var(--pm-content)
+  font-size: 16px
+  line-height: 1.6
+
+.md-text.content h1
+  margin: 28px auto 20px
+  font-size: 28px
+
+.md-text.content h2
+  margin: 24px auto 16px
+  font-size: 24px
+
+.md-text.content h3
+  margin: 24px 0 16px
+  font-size: 18px
+
+.md-text.content h4
+  margin: 24px 0 16px
+  font-size: 16px
+
+.md-text.content h5
+  margin: 24px 0 16px
+  font-size: 14px
+
+.md-text.content h6
+  margin: 24px 0 16px
+  font-size: 12px
+
+.md-text.content p,
+.md-text.content ul,
+.md-text.content ol,
+.md-text.content figure,
+.md-text.content dl
+  margin-bottom: var(--pm-content-gap)
+
+.md-text.content ul,
+.md-text.content ol
+  padding-inline-start: 20px
+
+.md-text.content li
+  margin-top: 5px
+
+.md-text.content li p
+  margin-bottom: 0
+
+/* PaperMod 用 box-shadow 做链接下划线 */
+.md-text.content a
+  box-shadow: 0 1px
+
+.md-text.content hr
+  margin: 30px 0
+  height: 2px
+  background: var(--pm-tertiary)
+  border-top: 0
+  border-bottom: 0
+
+.md-text.content blockquote
+  margin: 20px 0
+  padding: 0 14px
+  border-inline-start: 3px solid var(--pm-primary)
+  background: transparent
+
+.md-text.content img
+  border-radius: 4px
+  margin: 1rem 0
+
+/* 行内代码 */
+.md-text.content code
+  margin: auto 4px
+  padding: 4px 6px
+  font-size: 0.78em
+  line-height: 1.5
+  border-radius: 4px
+  background: var(--pm-code-bg)
+  color: var(--pm-content)
+
+/* 代码块：PaperMod 用深色底，浅色模式下也一样 */
+.md-text.content .highlight,
+.md-text.content pre
+  margin: 10px auto
+  background: var(--pm-hljs-bg)
+  border-radius: var(--pm-radius)
+
+.md-text.content .highlight table
+  background: transparent
+  margin: 0
+
+.md-text.content pre code
+  display: block
+  margin: 0
+  padding: 10px
+  background: transparent
+  color: #d5d5d6
+  font-size: 14px
+  line-height: 1.5
+  word-break: break-all
+
+.md-text.content table
+  width: 100%
+  margin-bottom: 32px
+  border-collapse: collapse
+
+.md-text.content table th,
+.md-text.content table td
+  min-width: 80px
+  padding: 6px 4px
+  line-height: 1.25
+  border-bottom: 1px solid var(--pm-border)
+
+.md-text.content table th
+  font-size: 14px
+  text-align: start
+
+
+/* ---------- 9. 页脚 ---------- */
+/* 上下篇卡片网格，Lil'Log 没有 */
+.related-wrap#read-next
+  display: none
+
+.article-footer
+  margin: 32px 0 0
+  padding: 0
+  background: transparent
+  border: none
+  border-radius: 0
+  color: var(--pm-secondary)
+  font-size: 14px
+  line-height: 1.6
+
+/* 对应 PaperMod 的 .footer：居中、12px */
+.page-footer
+  max-width: calc(var(--pm-main-width) + var(--pm-gap) * 2)
+  margin: 24px auto 0
+  padding: 0 var(--pm-gap) 24px
+  border-top: none
+  color: var(--pm-secondary)
+  font-size: 12px
+  line-height: 24px
+  text-align: center
+
+.page-footer hr
+  display: none
+
+.page-footer .sitemap
+  display: flex
+  flex-wrap: wrap
+  justify-content: center
+  gap: 32px
+  margin-bottom: 8px
+
+.page-footer .sitemap-group
+  display: flex
+  flex-direction: column
+
+.page-footer .sitemap-group span
+  font-weight: 600
+  color: var(--pm-primary)
+
+.page-footer a
+  color: inherit
+  border-bottom: 1px solid var(--pm-secondary)
+
+.page-footer a:hover
+  color: var(--pm-primary)
+  border-bottom: 1px solid var(--pm-primary)
+
+
+/* ---------- 10. 归档 / 标签 / 分类页 ---------- */
+.post-list #archive a.post,
+.post-list #cats a.cat,
+.post-list #tags a.tag
+  background: var(--pm-entry)
+  border: 1px solid var(--pm-border)
+  border-radius: var(--pm-radius)
+  box-shadow: none
+
+.post-list #archive a.post:hover,
+.post-list #cats a.cat:hover,
+.post-list #tags a.tag:hover
+  background: var(--pm-code-bg)
+  transform: none
+  box-shadow: none
+
+
+/* ---------- 11. 响应式 ---------- */
+@media screen and (max-width: 768px)
+  :root
+    --pm-gap: 14px
+
+  .l_left .leftbar-container
+    justify-content: flex-start
+    row-gap: 8px
+    padding: 8px var(--pm-gap)
+
+  .l_left .leftbar-container > header.header
+    margin-inline-end: 0
+
+  .article.banner .content h1,
+  .article.banner .content .title
+    font-size: 28px
+
+  .home-info .widget-header .name
+    font-size: 26px
