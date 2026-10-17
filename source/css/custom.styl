@@ -467,6 +467,16 @@ aside.l_right
   margin: 28px auto 20px
   font-size: 28px
 
+/* 主题给 tech 类型页的标题锚点画黑底 # 徽章（.l_body[type=tech] ... a:first-child），
+   PaperMod 版式标题不带装饰，这里整体隐藏（特异性需压过 0,4,3） */
+.l_body article.md-text.content h1 > a:first-child,
+.l_body article.md-text.content h2 > a:first-child,
+.l_body article.md-text.content h3 > a:first-child,
+.l_body article.md-text.content h4 > a:first-child,
+.l_body article.md-text.content h5 > a:first-child,
+.l_body article.md-text.content h6 > a:first-child
+  display: none
+
 .md-text.content h2
   margin: 24px auto 16px
   font-size: 24px
@@ -662,3 +672,85 @@ aside.l_right
 
   .home-info .widget-header .name
     font-size: 26px
+
+
+/* ---------- 12. 游记（travelogue） ----------
+ * 公众号版的小标题是「时间 · 地点」+ 海拔胶囊，
+ * 网站上保留这个信息结构，但按 PaperMod 的正文字号收敛一档，
+ * 免得场景标题抢过文章主标题。样式只在 travelogue: true 的文章里生效
+ * （class 由 scripts/papermod.js 注入）。
+ */
+.md-text.content.travelogue
+  line-height: 1.8
+
+/* 开头的系列标识 */
+.md-text.content .post-kicker
+  margin: 0 0 34px
+  font-size: 13px
+  line-height: 1.8
+  letter-spacing: 1px
+  color: var(--pm-secondary)
+
+/* 场景小标题：比普通 h2 小，靠上方大留白切分段落 */
+.md-text.content.travelogue h2
+  margin: 52px 0 20px
+  font-size: 19px
+  font-weight: 600
+  line-height: 1.5
+  letter-spacing: 0.5px
+
+/* 第一篇的小标题紧跟导语，不需要那么大的上边距 */
+.md-text.content.travelogue hr + h2
+  margin-top: 36px
+
+/* 海拔胶囊：12px 灰底，和正文拉开层次 */
+.md-text.content.travelogue h2 .alt
+  display: inline-block
+  margin-inline-start: 10px
+  padding: 2px 8px
+  border-radius: 3px
+  background: var(--pm-code-bg)
+  color: var(--pm-secondary)
+  font-size: 12px
+  font-weight: 400
+  letter-spacing: 0.5px
+  vertical-align: middle
+  white-space: nowrap
+
+/* 正文配图：统一宽度，图注贴近图片 */
+.md-text.content.travelogue img
+  width: 100%
+  margin: 32px 0 0
+  border-radius: 6px
+
+.md-text.content.travelogue p.figcap
+  margin: -6px 0 34px
+  font-size: 13px
+  line-height: 1.8
+  color: var(--pm-secondary)
+  text-align: center
+
+/* 文末的海拔线 */
+.md-text.content.travelogue p.post-note
+  margin: 48px 0 0
+  padding-top: 22px
+  border-top: 1px solid var(--pm-border)
+  font-size: 13px
+  line-height: 1.9
+  color: var(--pm-secondary)
+
+/* 诗句引用：去掉底色，只留左侧竖线 */
+.md-text.content.travelogue blockquote
+  margin: 26px 0
+  color: var(--pm-secondary)
+  font-size: 15px
+
+@media screen and (max-width: 768px)
+  .md-text.content.travelogue h2
+    margin: 40px 0 16px
+    font-size: 17px
+
+  .md-text.content.travelogue h2 .alt
+    display: block
+    width: fit-content
+    margin: 6px 0 0

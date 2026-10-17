@@ -4,12 +4,13 @@
  * Lil'Log / PaperMod 版式适配
  *
  * Stellar 的模板在 node_modules 里，直接改模板会在重装依赖后丢失，
- * 所以用 after_render:html 在生成产物上做两件事：
+ * 所以用 after_render:html 在生成产物上做三件事：
  *
  *   1. 把首页 welcome 组件从顶栏搬到正文顶部
  *      —— PaperMod 的 <article class="first-entry home-info"> 位于 <main> 内，
  *         而 Stellar 把它渲染在左侧栏（顶栏）里，位置和宽度都不对。
- *   2. 注入阅读时长（复用 hexo-wordcount 注册的 min2read helper）
+ *   2. 给 travelogue: true 的文章打上标记 class（游记专用排版）
+ *   3. 注入阅读时长（复用 hexo-wordcount 注册的 min2read helper）
  *
  * 数据全部取自 filter 的 data.page（layout / permalink / content / posts），
  * 不靠 HTML 结构反推页面类型，也不依赖日期元素的具体标签名。
@@ -142,12 +143,31 @@ function moveIntroToMain(html) {
 }
 
 /* ------------------------------------------------------------------ *
- * 2) 阅读时长
+ * 2) 游记标记
+ * ------------------------------------------------------------------ */
+
+// Stellar 的正文容器是 <article class="md-text content ...">，
+// 这里补一个 travelogue class，让 source/css/custom.styl 里的游记排版
+// 只作用于 front-matter 写了 travelogue: true 的文章。
+const CONTENT_RE = /<article\b[^<>]*\bclass="([^"]*\bmd-text\b[^"]*\bcontent\b[^"]*)"[^<>]*>/i;
+
+function tagTravelogue(html) {
+  const m = CONTENT_RE.exec(html);
+  if (!m) {
+    warnOnce('文章页未找到 .md-text.content，travelogue 样式未启用');
+    return html;
+  }
+  if (m[1].split(/\s+/).indexOf('travelogue') >= 0) return html;
+  const tag = m[0].replace(m[1], m[1] + ' travelogue');
+  return html.slice(0, m.index) + tag + html.slice(m.index + m[0].length);
+}
+
+/* ------------------------------------------------------------------ *
+ * 3) 阅读时长
  * ------------------------------------------------------------------ */
 
 /** 列表页：给每张卡片注入 */
-function injectIntoCards(html, posts, timer) {
-  // permalink -> 分钟数
+function injectIntoCards(html, posts, timer) {  // permalink -> 分钟数
   const byPath = new Map();
   posts.forEach((p) => byPath.set(normalize(p.permalink), timer(p.content)));
   if (byPath.size === 0) return html;
@@ -201,6 +221,7 @@ hexo.extend.filter.register('after_render:html', function (html, data) {
     } else {
       warnOnce('文章页未找到 #post-meta，阅读时长未注入');
     }
+    if (page.travelogue) html = tagTravelogue(html);
     return html;
   }
 
